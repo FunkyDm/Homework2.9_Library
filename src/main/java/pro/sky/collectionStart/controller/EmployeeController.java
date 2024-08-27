@@ -18,7 +18,6 @@ public class EmployeeController {
     private final EmployeeServiceImpl employeeServiceImpl;
 
     public EmployeeController(EmployeeServiceImpl employeeServiceImpl) {
-
         this.employeeServiceImpl = employeeServiceImpl;
     }
 
@@ -27,37 +26,19 @@ public class EmployeeController {
                                 @RequestParam(value = "lastName") String lastName,
                                 @RequestParam(value = "salary") double salary,
                                 @RequestParam(value = "department") int department) {
-        try {
-            return employeeServiceImpl.addEmployee(firstName, lastName, salary, department);
-        } catch (EmployeesStorageFullException exception) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Больше нельзя добавлять сотрудников.", exception);
-        } catch (EmployeeAlreadyAddedException exception) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Сотрудник уже добавлен", exception);
-        } catch (EmployeeWrongSalaryException exception){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Неправильное значение зарплаты", exception);
-        } catch (EmployeeWrongDepartmentNumberException exception){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Неправильный номер отдела", exception);
-        }
+        return employeeServiceImpl.addEmployee(firstName, lastName, salary, department);
     }
 
     @GetMapping("/remove")
     public Employee removeEmployee(@RequestParam(value = "firstName") String firstName,
                                    @RequestParam(value = "lastName") String lastName) {
-        try {
-            return employeeServiceImpl.removeEmployee(firstName, lastName);
-        } catch (EmployeeNotFoundExceptions exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такого сотрудника не существует.", exception);
-        }
+        return employeeServiceImpl.removeEmployee(firstName, lastName);
     }
 
     @GetMapping("/find")
     public Employee findEmployee(@RequestParam(value = "firstName") String firstName,
                                  @RequestParam(value = "lastName") String lastName) {
-        try {
-            return employeeServiceImpl.findEmployee(firstName, lastName);
-        } catch (EmployeeNotFoundExceptions exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такого сотрудника не существует.", exception);
-        }
+        return employeeServiceImpl.findEmployee(firstName, lastName);
     }
 
     @GetMapping

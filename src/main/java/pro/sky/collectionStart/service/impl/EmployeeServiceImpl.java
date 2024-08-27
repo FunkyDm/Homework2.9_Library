@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import pro.sky.collectionStart.exceptions.*;
 import pro.sky.collectionStart.model.Employee;
 import pro.sky.collectionStart.service.EmployeeService;
+import pro.sky.collectionStart.validation.StringParamValidation;
 
 import java.util.*;
 
@@ -13,19 +14,23 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     private final Map<String, Employee> employees = new HashMap<>();
 
+    private final StringParamValidation stringParamValidation;
+
+    public EmployeeServiceImpl(StringParamValidation stringParamValidation) {
+        this.stringParamValidation = stringParamValidation;
+    }
+
     @Override
     public Employee addEmployee(String firstName, String lastName, double salary, int department) {
+        firstName = stringParamValidation.stringValidationAndCapitalize(firstName);
+        lastName = stringParamValidation.stringValidationAndCapitalize(lastName);
         checkStorageIdFull();
         Employee employee = new Employee(firstName, lastName, salary, department);
         checkEmployeeAlreadyExists(employee);
-        if (employee.getSalary() <= 0) {
-            throw new EmployeeWrongSalaryException("Установлено неправильное значение зарплаты.");
-        } else if (0 < employee.getDepartment() && employee.getDepartment() > 5) {
-            throw new EmployeeWrongDepartmentNumberException("Установлен неправильный номер отдела.");
-        } else {
-            employees.put(employee.getFullName(), employee);
-            return employee;
-        }
+        checkEmployeeSalary(employee);
+        checkEmployeeDepartmentId(employee);
+        employees.put(employee.getFullName(), employee);
+        return employee;
     }
 
     @Override
@@ -62,6 +67,18 @@ public class EmployeeServiceImpl implements EmployeeService {
     private void checkEmployeeNotFound(Employee employee) {
         if (!employees.containsKey(employee.getFullName())) {
             throw new EmployeeNotFoundExceptions("Такого сотрудника не существует.");
+        }
+    }
+
+    private void checkEmployeeSalary(Employee employee) {
+        if (employee.getSalary() <= 0) {
+            throw new EmployeeWrongSalaryException("Установлено неправильное значение зарплаты.");
+        }
+    }
+
+    private void checkEmployeeDepartmentId(Employee employee){
+        if (0 <= employee.getDepartment() && employee.getDepartment() > 5){
+            throw new EmployeeWrongDepartmentNumberException("Установлен неправильный номер отдела.");
         }
     }
 

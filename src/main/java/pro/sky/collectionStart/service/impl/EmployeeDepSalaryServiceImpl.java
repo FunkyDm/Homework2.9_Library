@@ -25,6 +25,7 @@ public class EmployeeDepSalaryServiceImpl implements EmployeeDepSalaryService {
 
     @Override
     public List<Employee> getEmployeesByDep(int departmentId) {
+        checkDepartmentId(departmentId);
         return employeeServiceImpl.printAllEmployees()
                 .stream()
                 .filter(e -> (e.getDepartment() == departmentId))
@@ -47,6 +48,12 @@ public class EmployeeDepSalaryServiceImpl implements EmployeeDepSalaryService {
                 .stream()
                 .filter(e -> e.getDepartment() == departmentId)
                 .min(Comparator.comparing(Employee::getSalary))
+                .orElseThrow(() -> new EmployeeWrongDepartmentNumberException("Установлен неправильный номер отдела."));
+    }
+
+    private void checkDepartmentId(int departmentId) {
+        Optional.of(departmentId)
+                .filter(id -> id >= 1 && id <= 5)
                 .orElseThrow(() -> new EmployeeWrongDepartmentNumberException("Установлен неправильный номер отдела."));
     }
 
