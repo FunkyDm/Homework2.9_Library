@@ -5,39 +5,38 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import pro.sky.collectionStart.model.Employee;
-import pro.sky.collectionStart.service.EmployeeDepSalaryService;
+import pro.sky.collectionStart.service.impl.EmployeeDepSalaryServiceImpl;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/departments/")
 public class EmployeeDepSalaryController {
-    private final EmployeeDepSalaryService employeeDepSalaryService;
+    private final EmployeeDepSalaryServiceImpl employeeDepSalaryServiceImpl;
 
-    public EmployeeDepSalaryController(EmployeeDepSalaryService employeeDepSalaryService) {
-        this.employeeDepSalaryService = employeeDepSalaryService;
+    public EmployeeDepSalaryController(EmployeeDepSalaryServiceImpl employeeDepSalaryServiceImpl) {
+        this.employeeDepSalaryServiceImpl = employeeDepSalaryServiceImpl;
     }
 
     @GetMapping("all")
     public Map<Integer,List<Employee>> getEmployees() {
-        return employeeDepSalaryService.getEmployees();
+        return employeeDepSalaryServiceImpl.getEmployees();
     }
 
     @GetMapping("all-by-dep")
     public List<Employee> getEmployeesByDep(@RequestParam(value = "departmentId") int departmentId) {
-        return employeeDepSalaryService.getEmployeesByDep(departmentId);
+        return employeeDepSalaryServiceImpl.getEmployeesByDep(departmentId);
     }
 
     @GetMapping("max-salary")
     public Employee getEmployeeDepMaxSalary(@RequestParam(value = "departmentId") int departmentId) {
-        return employeeDepSalaryService.getEmployeeDepMaxSalary(departmentId);
+        return employeeDepSalaryServiceImpl.getEmployeeDepMaxSalary(departmentId);
     }
 
     @GetMapping("min-salary")
     public Employee getEmployeeMinSalary(@RequestParam(value = "departmentId") int departmentId) {
-        return employeeDepSalaryService.getEmployeeDepMinSalary(departmentId);
+        return employeeDepSalaryServiceImpl.getEmployeeDepMinSalary(departmentId);
     }
 
 }

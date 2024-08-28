@@ -8,18 +8,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import pro.sky.collectionStart.exceptions.*;
 import pro.sky.collectionStart.model.Employee;
-import pro.sky.collectionStart.service.EmployeeService;
+import pro.sky.collectionStart.service.impl.EmployeeServiceImpl;
 
 import java.util.Collection;
 
 @RestController
 @RequestMapping("/employee/")
 public class EmployeeController {
-    private final EmployeeService employeeService;
+    private final EmployeeServiceImpl employeeServiceImpl;
 
-    public EmployeeController(EmployeeService employeeService) {
-
-        this.employeeService = employeeService;
+    public EmployeeController(EmployeeServiceImpl employeeServiceImpl) {
+        this.employeeServiceImpl = employeeServiceImpl;
     }
 
     @GetMapping("/add")
@@ -27,46 +26,24 @@ public class EmployeeController {
                                 @RequestParam(value = "lastName") String lastName,
                                 @RequestParam(value = "salary") double salary,
                                 @RequestParam(value = "department") int department) {
-        try {
-            return employeeService.addEmployee(firstName, lastName, salary, department);
-        } catch (EmployeesStorageFullException exception) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Больше нельзя добавлять сотрудников.", exception);
-        } catch (EmployeeAlreadyAddedException exception) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Сотрудник уже добавлен", exception);
-        } catch (EmployeeWrongSalaryException exception){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Неправильное значение зарплаты", exception);
-        } catch (EmployeeWrongDepartmentNumberException exception){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Неправильный номер отдела", exception);
-        }
+        return employeeServiceImpl.addEmployee(firstName, lastName, salary, department);
     }
 
     @GetMapping("/remove")
     public Employee removeEmployee(@RequestParam(value = "firstName") String firstName,
-                                   @RequestParam(value = "lastName") String lastName,
-                                   @RequestParam(value = "salary") double salary,
-                                   @RequestParam(value = "department") int department) {
-        try {
-            return employeeService.removeEmployee(firstName, lastName, salary, department);
-        } catch (EmployeeNotFoundExceptions exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такого сотрудника не существует.", exception);
-        }
+                                   @RequestParam(value = "lastName") String lastName) {
+        return employeeServiceImpl.removeEmployee(firstName, lastName);
     }
 
     @GetMapping("/find")
     public Employee findEmployee(@RequestParam(value = "firstName") String firstName,
-                                 @RequestParam(value = "lastName") String lastName,
-                                 @RequestParam(value = "salary") double salary,
-                                 @RequestParam(value = "department") int department) {
-        try {
-            return employeeService.findEmployee(firstName, lastName, salary, department);
-        } catch (EmployeeNotFoundExceptions exception) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Такого сотрудника не существует.", exception);
-        }
+                                 @RequestParam(value = "lastName") String lastName) {
+        return employeeServiceImpl.findEmployee(firstName, lastName);
     }
 
     @GetMapping
     public Collection<Employee> printAllEmployees() {
-        return employeeService.printAllEmployees();
+        return employeeServiceImpl.printAllEmployees();
     }
 
 }

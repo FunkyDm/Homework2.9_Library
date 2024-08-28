@@ -1,58 +1,15 @@
 package pro.sky.collectionStart.service;
 
-import org.springframework.stereotype.Service;
-import pro.sky.collectionStart.exceptions.*;
 import pro.sky.collectionStart.model.Employee;
 
-import java.util.*;
+import java.util.Collection;
 
-@Service
-public class EmployeeService {
-    private static final int MAX_NUM_EMPLOYEES = 10;
+public interface EmployeeService {
+    Employee addEmployee(String firstName, String lastName, double salary, int department);
 
-    private final Map<String, Employee> employees = new HashMap<>();
+    Employee removeEmployee(String firstName, String lastName);
 
-    public Employee addEmployee(String firstName, String lastName, double salary, int department) {
-        if (employees.size() == MAX_NUM_EMPLOYEES) {
-            throw new EmployeesStorageFullException("Больше нельзя добавлять сотрудников.");
-        }
-        Employee employee = new Employee(firstName, lastName, salary, department);
-        if (employees.containsKey(employee.getFullName())) {
-            throw new EmployeeAlreadyAddedException("Такой сотрудник уже существует.");
-        } else if (employee.getSalary() <= 0){
-            throw new EmployeeWrongSalaryException("Установлено неправильное значение зарплаты.");
-        } else if (0 < employee.getDepartment() && employee.getDepartment() > 5){
-            throw new EmployeeWrongDepartmentNumberException("Уставлен неправильный номер отдела.");
-        } else{
-            employees.put(employee.getFullName(), employee);
-            return employee;
-        }
-    }
+    Employee findEmployee(String firstName, String lastName);
 
-    public Employee removeEmployee(String firstName, String lastName, double salary, int department) {
-        Employee employee = new Employee(firstName, lastName, salary, department);
-        if (employees.containsKey(employee.getFullName())) {
-            return employees.remove(employee.getFullName());
-        } else {
-            throw new EmployeeNotFoundExceptions("Такого сотрудника не существует.");
-        }
-    }
-
-    public Employee findEmployee(String firstName, String lastName, double salary, int department) {
-        Employee employee = new Employee(firstName, lastName, salary, department);
-        if (employees.containsKey(employee.getFullName())) {
-            return employees.get(employee.getFullName());
-        } else {
-            throw new EmployeeNotFoundExceptions("Такого сотрудника не существует.");
-        }
-    }
-
-    public Collection<Employee> printAllEmployees() {
-        return Collections.unmodifiableCollection(employees.values());
-    }
-
-    public Map<String, Employee> getMap() {
-        return employees;
-    }
-
+    Collection<Employee> printAllEmployees();
 }
